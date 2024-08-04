@@ -1,1 +1,21 @@
-<p>materias works!</p>
+<!-- src/app/components/materia/materia.component.html -->
+<div>
+    <h2>Add New Materia</h2>
+    <form (ngSubmit)="addMateria()">
+      <label for="nombre_chef">Chef Name:</label>
+      <select id="nombre_chef" [(ngModel)]="materia.nombre_chef" name="nombre_chef" required>
+        <option *ngFor="let chef of chefs" [value]="chef.nombre">{{ chef.nombre }}</option>
+      </select>
+  
+      <label for="grupo">Group:</label>
+      <input id="grupo" type="text" [(ngModel)]="materia.grupo" name="grupo" required>
+  
+      <label for="modulo">Module:</label>
+      <input id="modulo" type="text" [(ngModel)]="materia.modulo" name="modulo" required>
+  
+      <button type="submit">Add Materia</button>
+    </form>
+  
+    <p *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p *ngIf="successMessage">{{ successMessage }}</p>
+  </div>

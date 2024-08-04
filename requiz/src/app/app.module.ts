@@ -1,6 +1,11 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSortModule } from '@angular/material/sort';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -12,7 +17,12 @@ import { MateriasComponent } from './materias/materias.component';
 import { ProductosComponent } from './productos/productos.component';
 import { CategoriasComponent } from './categorias/categorias.component';
 import { RequisicionesComponent } from './requisiciones/requisiciones.component';
-import { SupabaseService } from './supabase.service';
+import { RequisitionDetailsComponent } from './requisition-details/requisition-details.component';
+import { SupabaseService } from './services/supabase.service';
+import { ChefService } from './services/chefs.service';
+import { RequisicionDetailsService } from './services/requisition-details.service';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+
 
 @NgModule({
   declarations: [
@@ -24,14 +34,22 @@ import { SupabaseService } from './supabase.service';
     MateriasComponent,
     ProductosComponent,
     CategoriasComponent,
-    RequisicionesComponent
+    RequisicionesComponent,
+    RequisitionDetailsComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule, // Ensure AppRoutingModule is imported
-    FormsModule
+    AppRoutingModule,
+    FormsModule,
+    RouterModule,
+    ReactiveFormsModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSortModule,
+    NgxDatatableModule
   ],
-  providers: [SupabaseService],
+  providers: [SupabaseService, ChefService, RequisicionDetailsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

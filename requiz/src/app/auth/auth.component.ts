@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { SupabaseService } from '../supabase.service';
+import { Router } from '@angular/router'; // Import Router
+import { SupabaseService } from '../services/supabase.service';
 
 @Component({
   selector: 'app-auth',
@@ -11,12 +12,26 @@ export class AuthComponent {
   password: string = '';
   errorMessage: string = '';
 
-  constructor(private supabaseService: SupabaseService) { }
+  constructor(private supabaseService: SupabaseService, private router: Router) { } // Inject Router
 
   async signIn() {
     try {
       await this.supabaseService.signIn(this.email, this.password);
-      // Redirect to dashboard or other logic
+      this.router.navigate(['/dashboard']); // Redirect to dashboard
+    } catch (error) {
+      if (error instanceof Error) {
+        this.errorMessage = error.message;
+      } else {
+        this.errorMessage = 'An unexpected error occurred';
+      }
+    }
+  }
+
+  async signOut() {
+    try {
+      await this.supabaseService.signOut();
+      this.router.navigate(['/auth']); // Redirect to login
+      console.log("Signed out successfully");
     } catch (error) {
       if (error instanceof Error) {
         this.errorMessage = error.message;

@@ -1,1 +1,18 @@
-<p>dashboard works!</p>
+<div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+<ngx-datatable
+  class="bootstrap"
+  [rows]="requisiciones"
+  [columns]="[
+    { prop: 'id_requisicion', name: 'Requisición ID' },
+    { prop: 'id_chef', name: 'Chef ID' },
+    { prop: 'id_materia', name: 'Materia ID' },
+    { prop: 'fecha', name: 'Fecha' },
+    { prop: 'semana', name: 'Semana' },
+    { name: 'Acciones', cellTemplate: actionTemplate }
+  ]">
+</ngx-datatable>
+
+<ng-template #actionTemplate let-row="row">
+  <button (click)="viewRequisition(row.id_requisicion)">View</button>
+</ng-template>

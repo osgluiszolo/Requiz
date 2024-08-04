@@ -1,1 +1,14 @@
-<p>categorias works!</p>
+<h2>Agregar Nueva Categoría</h2>
+<form [formGroup]="categoriaForm" (ngSubmit)="submit()">
+  <label for="nombre">Nombre de la Categoría:</label>
+  <input id="nombre" formControlName="nombre" type="text">
+
+  <button type="submit">Agregar Categoría</button>
+</form>
+
+<h2>Lista de Categorías</h2>
+<ul>
+  <li *ngFor="let categoria of categorias">
+    {{ categoria.nombre }}
+  </li>
+</ul>

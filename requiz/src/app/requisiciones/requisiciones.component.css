@@ -1,0 +1,17 @@
+/* requisiciones.component.css */
+form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    margin-top: 10px;
+  }
+  
+  input, select {
+    margin-bottom: 10px;
+  }
+  
+  button {
+    margin-top: 10px;
+  }

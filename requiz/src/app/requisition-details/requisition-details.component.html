@@ -1,0 +1,16 @@
+<div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+<div *ngIf="requisicionId">
+  <h2>Requisición ID: {{ requisicionId }}</h2>
+
+  <ngx-datatable
+    class="bootstrap"
+    [rows]="productos"
+    [columns]="[
+      { prop: 'producto', name: 'Producto' },
+      { prop: 'cantidad', name: 'Cantidad' },
+      { prop: 'unidad', name: 'Unidad' },
+      { prop: 'categorias', name: 'Categoría' }
+    ]">
+  </ngx-datatable>
+</div>
