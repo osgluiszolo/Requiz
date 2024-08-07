@@ -1,17 +1,55 @@
-/* requisiciones.component.css */
-form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  label {
-    margin-top: 10px;
-  }
-  
-  input, select {
-    margin-bottom: 10px;
-  }
-  
-  button {
-    margin-top: 10px;
-  }
+/* styles.css or requisiciones.component.css */
+mat-card {
+  margin: 20px;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.form-field {
+  flex: 1 1 calc(33.333% - 16px); /* Ajustar para que quepan tres campos por fila */
+  margin: 8px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.add-product-btn {
+  margin: 16px 0;
+}
+
+.add-section-btn {
+  margin: 24px 0;
+  text-align: right;
+}
+
+.product-table {
+  margin-top: 16px;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+.success {
+  color: green;
+  font-weight: bold;
+}
+
+mat-card-content {
+  padding-bottom: 0 !important; /* Opcional: Ajustar padding según necesidad */
+}
+
+mat-card-actions.card-actions {
+  justify-content: flex-end;
+  padding-top: 16px; /* Ajustar padding según necesidad */
+}
+.product-table-container {
+  max-height: 250px; /* Adjust height according to your row height */
+  overflow-y: auto;
+}

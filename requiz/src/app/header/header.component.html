@@ -1,11 +1,27 @@
-<nav>
-    <ul>
-      <li><a routerLink="/dashboard">Dashboard</a></li>
-      <li><a routerLink="/chefs">Chefs</a></li>
-      <li><a routerLink="/materias">Materias</a></li>
-      <li><a routerLink="/productos">Productos</a></li>
-      <li><a routerLink="/categorias">Categorias</a></li>
-      <li><a routerLink="/requisiciones">Requisiciones</a></li>
-      <li><a (click)="signOut()">Logout</a></li> <!-- Optional Logout link -->
-    </ul>
-  </nav>
+<!-- header.component.html -->
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="sidenav.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span>Requiz</span>
+</mat-toolbar>
+<mat-sidenav-container class="example-container">
+  <mat-sidenav #sidenav mode="side" class="example-sidenav" (click)="sidenav.close()">
+    <mat-nav-list>
+      <a mat-list-item routerLink="/dashboard">Dashboard</a>
+      <a mat-list-item routerLink="/chefs">Chefs</a>
+      <a mat-list-item routerLink="/materias">Materias</a>
+      <a mat-list-item routerLink="/productos">Productos</a>
+      <a mat-list-item routerLink="/categorias">Categorias</a>
+      <a mat-list-item routerLink="/requisiciones">Requisiciones</a>
+      <a mat-list-item routerLink="/condensado-productos">Condensado Productos</a>
+      <a mat-list-item (click)="signOut()">Logout</a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

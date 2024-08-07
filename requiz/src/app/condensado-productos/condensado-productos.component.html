@@ -1,0 +1,42 @@
+<mat-form-field appearance="fill">
+    <mat-label>Seleccione una fecha</mat-label>
+    <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (ngModelChange)="onDateChange($event)">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+  
+  <mat-form-field appearance="fill">
+    <mat-label>Seleccione una categoría</mat-label>
+    <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onCategoryChange($event)">
+      <mat-option [value]="null">Todas las Categorías</mat-option>
+      <mat-option *ngFor="let category of categories" [value]="category.nombre">{{ category.nombre }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  
+  <button mat-raised-button color="primary" [disabled]="!selectedDate" (click)="buscarProductos()">Buscar</button>
+  <button mat-raised-button color="accent" [disabled]="!dataSource.data.length" (click)="exportAsExcel()">Exportar a Excel</button>
+  
+  <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <ng-container matColumnDef="categoria">
+      <mat-header-cell *matHeaderCellDef> Categoria </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.categoria}} </mat-cell>
+    </ng-container>
+  
+    <ng-container matColumnDef="producto">
+      <mat-header-cell *matHeaderCellDef> Producto </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.producto}} </mat-cell>
+    </ng-container>
+  
+    <ng-container matColumnDef="unidad">
+      <mat-header-cell *matHeaderCellDef> Unidad </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.unidad}} </mat-cell>
+    </ng-container>
+  
+    <ng-container matColumnDef="cantidad_total">
+      <mat-header-cell *matHeaderCellDef> Cantidad Total </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.cantidad_total}} </mat-cell>
+    </ng-container>
+  
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>

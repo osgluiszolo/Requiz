@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { RequisicionesService } from '../services/requisiciones-service.service';
 import { CategoriaService } from '../services/categoria-service.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-requisiciones',
@@ -13,7 +14,10 @@ export class RequisicionesComponent implements OnInit {
   materias: any[] = [];
   chefs: any[] = [];
   categorias: any[] = [];
-  currentCategoriaId: number | null = null;
+  productosData: any[][] = [];
+  editing: boolean[][] = [];
+
+  displayedColumns: string[] = ['index', 'nombre', 'cantidad', 'unidad', 'acciones'];
 
   errorMessage: string | null = null;
   successMessage: string | null = null;
@@ -21,20 +25,21 @@ export class RequisicionesComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private requisicionesService: RequisicionesService,
-    private categoriaService: CategoriaService
+    private categoriaService: CategoriaService,
+    private cd: ChangeDetectorRef // Inject ChangeDetectorRef
   ) {
     this.requisicionForm = this.fb.group({
       materia: ['', Validators.required],
       chef: ['', Validators.required],
       fecha: ['', Validators.required],
       semana: ['', Validators.required],
-      categoria: ['', Validators.required],
-      productos: this.fb.array([]) // Inicializa el FormArray para productos
+      sections: this.fb.array([]) // FormArray for sections
     });
   }
 
   ngOnInit() {
     this.loadData();
+    this.addSection(); // Initialize with one section
   }
 
   async loadData() {
@@ -47,37 +52,108 @@ export class RequisicionesComponent implements OnInit {
     }
   }
 
-  get productos(): FormArray {
-    return this.requisicionForm.get('productos') as FormArray;
+  get sections(): FormArray {
+    return this.requisicionForm.get('sections') as FormArray;
   }
 
-  addProducto() {
-    const productoGroup = this.fb.group({
+  productos(sectionIndex: number): FormArray {
+    return this.sections.at(sectionIndex).get('productos') as FormArray;
+  }
+
+  addSection() {
+    const sectionGroup = this.fb.group({
+      categoria: ['', Validators.required],
+      productos: this.fb.array([this.createProductoGroup()]) // Initialize with one product group
+    });
+    this.sections.push(sectionGroup);
+    this.productosData.push([]); // Initialize an empty array for the new section
+    this.editing.push([]); // Initialize an empty array for the editing state
+  }
+
+  createProductoGroup(): FormGroup {
+    return this.fb.group({
       nombre: ['', Validators.required],
       cantidad: ['', Validators.required],
       unidad: ['', Validators.required]
     });
-    this.productos.push(productoGroup);
   }
 
-  onCategoriaChange(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    this.currentCategoriaId = target.value ? parseInt(target.value, 10) : null;
+  addProducto(sectionIndex: number) {
+    this.productos(sectionIndex).push(this.createProductoGroup());
+  }
+
+  onAddProducto(sectionIndex: number) {
+    const productoArray = this.productos(sectionIndex);
+    const productoGroup = productoArray.at(productoArray.length - 1); // Get the last product group in the form array
+
+    const categoriaControl = this.sections.at(sectionIndex)?.get('categoria');
+    if (productoGroup.invalid || !categoriaControl || categoriaControl.value == null) {
+      this.errorMessage = 'Por favor complete todos los campos del producto y seleccione una categoría.';
+      return;
+    }
+
+    const producto = productoGroup.value;
+    console.log('Producto agregado:', producto); // Debugging log
+    this.productosData[sectionIndex].push(producto);
+    this.editing[sectionIndex].push(false); // Initialize the editing state to false
+    console.log('Productos data actualizada:', this.productosData[sectionIndex]); // Debugging log
+
+    // Clear and reinitialize the form fields
+    productoArray.clear();
+    this.addProducto(sectionIndex);
+    this.cd.detectChanges(); // Manually trigger change detection
+  }
+
+  onRemoveProducto(sectionIndex: number, productoIndex: number) {
+    this.productosData[sectionIndex].splice(productoIndex, 1); // Remove product from data array
+    this.editing[sectionIndex].splice(productoIndex, 1); // Remove editing state for the removed product
+    this.cd.detectChanges(); // Manually trigger change detection
+  }
+
+  onEditProducto(sectionIndex: number, productoIndex: number) {
+    if (this.editing[sectionIndex][productoIndex]) {
+      // Save changes
+      const productoForm = this.productos(sectionIndex).at(productoIndex);
+      if (productoForm.invalid) {
+        this.errorMessage = 'Por favor complete todos los campos del producto.';
+        return;
+      }
+      this.productosData[sectionIndex][productoIndex] = productoForm.value;
+      this.editing[sectionIndex][productoIndex] = false;
+    } else {
+      // Enable editing
+      this.editing[sectionIndex][productoIndex] = true;
+    }
+    this.cd.detectChanges(); // Manually trigger change detection
+  }
+
+  isEditing(sectionIndex: number, productoIndex: number): boolean {
+    return this.editing[sectionIndex][productoIndex] ?? false;
+  }
+
+  getProductosDataSource(sectionIndex: number) {
+    return [...this.productosData[sectionIndex]]; // Return a copy of the array to trigger change detection
   }
 
   async submit() {
-    if (this.requisicionForm.invalid) {
+    const formValue = this.requisicionForm.value;
+
+    // Validación de campos principales del formulario
+    if (!this.requisicionForm.controls['materia'].valid ||
+        !this.requisicionForm.controls['chef'].valid ||
+        !this.requisicionForm.controls['fecha'].valid ||
+        !this.requisicionForm.controls['semana'].valid) {
       this.errorMessage = 'Por favor complete todos los campos de la requisición.';
       return;
     }
 
     try {
-      const formValue = this.requisicionForm.value;
+      // Datos de la requisición sin los productos
       const requisicionData = {
-        id_chef: formValue.chef,
-        id_materia: formValue.materia,
-        fecha: formValue.fecha,
-        semana: formValue.semana
+        id_chef: formValue['chef'],
+        id_materia: formValue['materia'],
+        fecha: formValue['fecha'],
+        semana: formValue['semana']
       };
 
       // Insertar la requisición y obtener el ID generado
@@ -97,55 +173,58 @@ export class RequisicionesComponent implements OnInit {
       const requisicionId = requisicion.id_requisicion;
       console.log('Requisición insertada con ID:', requisicionId);
 
-      // Insertar los productos y las relaciones correspondientes
-      for (const producto of formValue.productos) {
-        const productData = {
-          producto: producto.nombre,
-          cantidad: producto.cantidad,
-          unidad: producto.unidad
-        };
+      // Insertar los productos y las relaciones correspondientes por sección
+      for (const sectionIndex of Object.keys(formValue['sections'])) {
+        const categoriaId = formValue['sections'][parseInt(sectionIndex, 10)]['categoria'];
+        const productos = this.productosData[parseInt(sectionIndex, 10)];
 
-        const productResponse = await this.requisicionesService.addProducto(productData);
-        const product = productResponse[0];
-        const productError = productResponse.error;
+        for (const producto of productos) {
+          const productData = {
+            producto: producto['nombre'],
+            cantidad: producto['cantidad'],
+            unidad: producto['unidad']
+          };
 
-        if (productError) {
-          console.error('Error al insertar el producto:', productError);
-          throw productError;
-        }
-        if (!product) {
-          console.error('Error al obtener el nuevo producto.');
-          throw new Error('Error al obtener el nuevo producto.');
-        }
+          const productResponse = await this.requisicionesService.addProducto(productData);
+          const product = productResponse[0];
+          const productError = productResponse.error;
 
-        const productId = product.id_producto;
-        console.log('Producto insertado con ID:', productId);
+          if (productError) {
+            console.error('Error al insertar el producto:', productError);
+            throw productError;
+          }
+          if (!product) {
+            console.error('Error al obtener el nuevo producto.');
+            throw new Error('Error al obtener el nuevo producto.');
+          }
 
-        // Insertar relación en requisicion_producto
-        const requisicionProductoData = {
-          id_requisicion: requisicionId,
-          id_producto: productId
-        };
-        const requisicionProductoResponse = await this.requisicionesService.addRequisicionProducto(requisicionProductoData);
-        const requisicionProducto = requisicionProductoResponse[0];
-        const requisicionProductoError = requisicionProductoResponse.error;
+          const productId = product.id_producto;
+          console.log('Producto insertado con ID:', productId);
 
-        if (requisicionProductoError) {
-          console.error('Error al insertar la relación requisición-producto:', requisicionProductoError);
-          throw requisicionProductoError;
-        }
-        if (!requisicionProducto) {
-          console.error('Error al obtener la nueva relación requisicion-producto.');
-          throw new Error('Error al obtener la nueva relación requisicion-producto.');
-        }
+          // Insertar relación en requisicion_producto
+          const requisicionProductoData = {
+            id_requisicion: requisicionId,
+            id_producto: productId
+          };
+          const requisicionProductoResponse = await this.requisicionesService.addRequisicionProducto(requisicionProductoData);
+          const requisicionProducto = requisicionProductoResponse[0];
+          const requisicionProductoError = requisicionProductoResponse.error;
 
-        console.log('Relación requisición-producto insertada:', requisicionProducto);
+          if (requisicionProductoError) {
+            console.error('Error al insertar la relación requisición-producto:', requisicionProductoError);
+            throw requisicionProductoError;
+          }
+          if (!requisicionProducto) {
+            console.error('Error al obtener la nueva relación requisicion-producto.');
+            throw new Error('Error al obtener la nueva relación requisicion-producto.');
+          }
 
-        // Insertar relación en categoria_producto
-        if (this.currentCategoriaId !== null) {
+          console.log('Relación requisición-producto insertada:', requisicionProducto);
+
+          // Insertar relación en categoria_producto
           const categoriaProductoData = {
             id_producto: productId,
-            id_categoria: this.currentCategoriaId
+            id_categoria: categoriaId
           };
           const categoriaProductoResponse = await this.requisicionesService.addCategoriaProducto(categoriaProductoData);
           const categoriaProducto = categoriaProductoResponse[0];
@@ -161,9 +240,6 @@ export class RequisicionesComponent implements OnInit {
           }
 
           console.log('Relación categoria-producto insertada:', categoriaProducto);
-        } else {
-          console.error('No se seleccionó ninguna categoría');
-          throw new Error('No se seleccionó ninguna categoría');
         }
       }
 
@@ -178,15 +254,18 @@ export class RequisicionesComponent implements OnInit {
       console.error('Error:', error);
       this.errorMessage = error.message;
     } else if (typeof error === 'string') {
+      this.errorMessage = error
+    } else if (typeof error === 'string') {
       this.errorMessage = error;
     } else {
       this.errorMessage = 'Ocurrió un error desconocido';
     }
   }
 
-  getCategoriaNombre(): string {
-    if (this.currentCategoriaId !== null) {
-      const categoria = this.categorias.find(cat => cat.id_categoria === this.currentCategoriaId);
+  getCategoriaNombre(sectionIndex: number): string {
+    const categoriaId = this.sections.at(sectionIndex)?.get('categoria')?.value;
+    if (categoriaId) {
+      const categoria = this.categorias.find(cat => cat.id_categoria === categoriaId);
       return categoria ? categoria.nombre : 'Ninguna';
     }
     return 'Ninguna';

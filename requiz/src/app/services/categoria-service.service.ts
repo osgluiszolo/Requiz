@@ -10,7 +10,7 @@ export class CategoriaService {
   async getCategorias() {
     const { data, error } = await this.supabaseService.supabase
       .from('categorias')
-      .select('*');
+      .select('id_categoria, nombre');
     if (error) throw error;
     return data;
   }
@@ -27,7 +27,11 @@ export class CategoriaService {
   async getRequisiciones(): Promise<any[]> {
     const { data, error } = await this.supabaseService.supabase
       .from('requisiciones')
-      .select('*');
+      .select(`
+        *,
+        chefs!requisiciones_id_chef_fkey ( nombre ),
+        materias!requisiciones_id_materia_fkey ( modulo )
+      `);
     if (error) throw error;
     return data || [];
   }

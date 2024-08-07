@@ -1,18 +1,56 @@
-<div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+<div class="dashboard-container">
+  <h1>Requisiciones Dashboard</h1>
 
-<ngx-datatable
-  class="bootstrap"
-  [rows]="requisiciones"
-  [columns]="[
-    { prop: 'id_requisicion', name: 'Requisición ID' },
-    { prop: 'id_chef', name: 'Chef ID' },
-    { prop: 'id_materia', name: 'Materia ID' },
-    { prop: 'fecha', name: 'Fecha' },
-    { prop: 'semana', name: 'Semana' },
-    { name: 'Acciones', cellTemplate: actionTemplate }
-  ]">
-</ngx-datatable>
+  <div class="filters">
+    <mat-form-field appearance="fill" class="filter-field">
+      <mat-label>Buscar por texto</mat-label>
+      <input matInput (input)="applyTextFilter($event)" placeholder="Buscar...">
+    </mat-form-field>
 
-<ng-template #actionTemplate let-row="row">
-  <button (click)="viewRequisition(row.id_requisicion)">View</button>
-</ng-template>
+    <mat-form-field appearance="fill" class="filter-field">
+      <mat-label>Buscar por fecha</mat-label>
+      <input matInput [matDatepicker]="picker" (dateChange)="applyDateFilter($event)" placeholder="Seleccionar fecha">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <mat-table [dataSource]="filteredRequisiciones" class="mat-elevation-z8 mat-table">
+    <ng-container matColumnDef="id_requisicion">
+      <mat-header-cell *matHeaderCellDef> Requisición ID </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.id_requisicion}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="nombre_chef">
+      <mat-header-cell *matHeaderCellDef> Nombre del Chef </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.chefs.nombre}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="modulo">
+      <mat-header-cell *matHeaderCellDef> Materia </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.materias.modulo}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="fecha">
+      <mat-header-cell *matHeaderCellDef> Fecha </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.fecha | date}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="semana">
+      <mat-header-cell *matHeaderCellDef> Semana </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.semana}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="acciones">
+      <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <button mat-button color="primary" (click)="viewRequisition(element.id_requisicion)">Ver</button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+</div>

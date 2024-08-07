@@ -1,0 +1,23 @@
+/* header.component.css */
+.example-container {
+    height: calc(100vh - 64px); /* Adjust based on your toolbar height */
+    margin-top: 64px; /* Adjust based on your toolbar height */
+  }
+  
+  .example-sidenav {
+    width: 250px;
+  }
+  
+  mat-toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+  }
+  
+  mat-sidenav-content {
+    height: calc(100vh - 64px); /* Adjust based on your toolbar height */
+    overflow: auto; /* Ensure content scrolls if it overflows */
+    padding: 16px; /* Adjust padding as needed */
+  }

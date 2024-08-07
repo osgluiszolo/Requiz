@@ -3,14 +3,52 @@
 <div *ngIf="requisicionId">
   <h2>Requisición ID: {{ requisicionId }}</h2>
 
-  <ngx-datatable
-    class="bootstrap"
-    [rows]="productos"
-    [columns]="[
-      { prop: 'producto', name: 'Producto' },
-      { prop: 'cantidad', name: 'Cantidad' },
-      { prop: 'unidad', name: 'Unidad' },
-      { prop: 'categorias', name: 'Categoría' }
-    ]">
-  </ngx-datatable>
+  <mat-form-field appearance="fill">
+    <mat-label>Filter</mat-label>
+    <input matInput [formControl]="filterControl" placeholder="Filter">
+  </mat-form-field>
+
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <!-- Producto Column -->
+    <ng-container matColumnDef="producto">
+      <th mat-header-cell *matHeaderCellDef> Producto </th>
+      <td mat-cell *matCellDef="let row"> {{ row.producto }} </td>
+    </ng-container>
+
+    <!-- Cantidad Column -->
+    <ng-container matColumnDef="cantidad">
+      <th mat-header-cell *matHeaderCellDef> Cantidad </th>
+      <td mat-cell *matCellDef="let row"> {{ row.cantidad }} </td>
+    </ng-container>
+
+    <!-- Unidad Column -->
+    <ng-container matColumnDef="unidad">
+      <th mat-header-cell *matHeaderCellDef> Unidad </th>
+      <td mat-cell *matCellDef="let row"> {{ row.unidad }} </td>
+    </ng-container>
+
+    <!-- Categorías Column -->
+    <ng-container matColumnDef="categorias">
+      <th mat-header-cell *matHeaderCellDef> Categoría </th>
+      <td mat-cell *matCellDef="let row"> {{ row.categorias }} </td>
+    </ng-container>
+
+    <!-- Acciones Column -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> Acciones </th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-icon-button (click)="editProduct(row)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="deleteProduct(row.id_producto)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <!-- Header and Row Definitions -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
 </div>

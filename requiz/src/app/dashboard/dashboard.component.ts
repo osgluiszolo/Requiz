@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CategoriaService } from '../services/categoria-service.service';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-dashboard',
@@ -9,7 +10,9 @@ import { CategoriaService } from '../services/categoria-service.service';
 })
 export class DashboardComponent implements OnInit {
   requisiciones: any[] = [];
+  filteredRequisiciones = new MatTableDataSource<any>();
   errorMessage: string | null = null;
+  displayedColumns: string[] = ['id_requisicion', 'nombre_chef', 'modulo', 'fecha', 'semana', 'acciones'];
 
   constructor(
     private categoriaService: CategoriaService,
@@ -19,14 +22,33 @@ export class DashboardComponent implements OnInit {
   async ngOnInit() {
     try {
       this.requisiciones = await this.categoriaService.getRequisiciones();
-      console.log(this.requisiciones);  // Asegúrate de que los datos están correctamente formateados
+      this.filteredRequisiciones.data = this.requisiciones;
     } catch (error) {
       this.handleError(error);
     }
   }
 
+  applyTextFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.filteredRequisiciones.filterPredicate = (data, filter) => {
+      return data.id_requisicion.toString().includes(filter) ||
+             data.nombre_chef.toLowerCase().includes(filter) ||
+             data.modulo.toLowerCase().includes(filter) ||
+             data.fecha.includes(filter) ||
+             data.semana.toString().includes(filter);
+    };
+    this.filteredRequisiciones.filter = filterValue;
+  }
+
+  applyDateFilter(event: any) {
+    const filterValueStr = event.value ? event.value.toISOString().split('T')[0] : '';
+    this.filteredRequisiciones.filterPredicate = (data, filter) => {
+      return data.fecha.includes(filter);
+    };
+    this.filteredRequisiciones.filter = filterValueStr;
+  }
+
   viewRequisition(id: number) {
-    console.log('Navigating to requisition with ID:', id);  // Agrega un log para verificar el ID
     this.router.navigate(['/requisition', id]);
   }
 

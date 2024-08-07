@@ -1,0 +1,28 @@
+/* header.component.css */
+.example-container {
+    height: 100vh;
+    top: 64px; /* Adjust based on your toolbar height */
+    position: absolute;
+  }
+  
+  .example-sidenav {
+    width: 250px;
+  }
+  
+  mat-toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+  }
+  
+  mat-sidenav-content {
+    padding: 24px; /* Increase padding for more space */
+    margin-top: 64px; /* Adjust based on your toolbar height */
+  }
+  
+  .content {
+    padding: 24px; /* Increase padding for more space */
+    margin-top: 64px; /* Adjust based on your toolbar height */
+  }

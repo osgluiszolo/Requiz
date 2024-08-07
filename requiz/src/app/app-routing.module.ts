@@ -8,6 +8,7 @@ import { ProductosComponent } from './productos/productos.component';
 import { CategoriasComponent } from './categorias/categorias.component';
 import { RequisicionesComponent } from './requisiciones/requisiciones.component';
 import { RequisitionDetailsComponent } from './requisition-details/requisition-details.component';
+import { CondensadoProductosComponent } from './condensado-productos/condensado-productos.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'categorias', component: CategoriasComponent },
   { path: 'requisiciones', component: RequisicionesComponent },
   { path: 'requisition/:id', component: RequisitionDetailsComponent },
+  { path: 'condensado-productos', component: CondensadoProductosComponent },
   { path: '', redirectTo: '/auth', pathMatch: 'full' }, // Redirect to auth on initial load
   { path: '**', redirectTo: '/auth' } // Wildcard route for a 404 page
 ];

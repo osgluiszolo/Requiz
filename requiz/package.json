@@ -24,6 +24,7 @@
     "@swimlane/ngx-datatable": "^20.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.6.3",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.14.3"
   },
   "devDependencies": {
