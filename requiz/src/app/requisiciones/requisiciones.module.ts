@@ -1,35 +1,33 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatTableModule } from '@angular/material/table';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 
-import { RequisicionesComponent } from './requisiciones.component';
 import { RequisicionesRoutingModule } from './requisiciones-routing.module';
+import { RequisicionesComponent } from './requisiciones.component';
 
 @NgModule({
   declarations: [RequisicionesComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatExpansionModule,
-    MatTableModule,
-    MatDividerModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatTableModule,
+    MatIconModule,
+    MatButtonModule,
+    MatDividerModule,
     RequisicionesRoutingModule
   ]
 })
