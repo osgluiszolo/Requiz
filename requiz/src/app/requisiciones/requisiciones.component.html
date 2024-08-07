@@ -75,8 +75,11 @@
                   </mat-form-field>
                 </div>
                 <div class="add-product-btn">
-                  <button mat-raised-button color="primary" type="button" (click)="onAddProducto(sectionIndex)" 
-                    [disabled]="!productos(sectionIndex).valid || !sections.at(sectionIndex)?.get('categoria')?.value">Agregar Producto</button>
+                  <button mat-raised-button color="primary" type="button" 
+                  (click)="onAddProducto(sectionIndex)" 
+                  [disabled]="!productos(sectionIndex).valid || !sections.at(sectionIndex).get('categoria').value">
+                  Agregar Producto
+                </button>
                 </div>
                 <!-- Tabla de Productos -->
                 <div class="product-table-container">

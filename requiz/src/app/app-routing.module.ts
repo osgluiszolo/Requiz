@@ -1,27 +1,19 @@
+// app-routing.module.ts
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthComponent } from './auth/auth.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { ChefsComponent } from './chefs/chefs.component';
-import { MateriasComponent } from './materias/materias.component';
-import { ProductosComponent } from './productos/productos.component';
-import { CategoriasComponent } from './categorias/categorias.component';
-import { RequisicionesComponent } from './requisiciones/requisiciones.component';
-import { RequisitionDetailsComponent } from './requisition-details/requisition-details.component';
-import { CondensadoProductosComponent } from './condensado-productos/condensado-productos.component';
 
 const routes: Routes = [
-  { path: 'auth', component: AuthComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'chefs', component: ChefsComponent },
-  { path: 'materias', component: MateriasComponent },
-  { path: 'productos', component: ProductosComponent },
-  { path: 'categorias', component: CategoriasComponent },
-  { path: 'requisiciones', component: RequisicionesComponent },
-  { path: 'requisition/:id', component: RequisitionDetailsComponent },
-  { path: 'condensado-productos', component: CondensadoProductosComponent },
-  { path: '', redirectTo: '/auth', pathMatch: 'full' }, // Redirect to auth on initial load
-  { path: '**', redirectTo: '/auth' } // Wildcard route for a 404 page
+  { path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },
+  { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
+  { path: 'chefs', loadChildren: () => import('./chefs/chefs.module').then(m => m.ChefsModule) },
+  { path: 'materias', loadChildren: () => import('./materias/materias.module').then(m => m.MateriasModule) },
+  { path: 'productos', loadChildren: () => import('./productos/productos.module').then(m => m.ProductosModule) },
+  { path: 'categorias', loadChildren: () => import('./categorias/categorias.module').then(m => m.CategoriasModule) },
+  { path: 'requisiciones', loadChildren: () => import('./requisiciones/requisiciones.module').then(m => m.RequisicionesModule) },
+  { path: 'requisition/:id', loadChildren: () => import('./requisition-details/requisition-details.module').then(m => m.RequisitionDetailsModule) },
+  { path: 'condensado-productos', loadChildren: () => import('./condensado-productos/condensado-productos.module').then(m => m.CondensadoProductosModule) },
+  { path: '', redirectTo: '/auth', pathMatch: 'full' },
+  { path: '**', redirectTo: '/auth' }
 ];
 
 @NgModule({
